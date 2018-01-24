@@ -54,5 +54,7 @@ function checkTickets() {
 
 function getTimeNow() {
     const now = new Date();
-    return now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds()
+    return ('0' + now.getHours()).slice(-2)   + ":" +
+    ('0' + now.getMinutes()).slice(-2) + ":" +
+    ('0' + now.getSeconds()).slice(-2);
 }
