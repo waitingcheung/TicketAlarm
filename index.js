@@ -24,15 +24,15 @@ function checkTickets() {
     (async function () {
         const instance = await phantom.create();
         const page = await instance.createPage();
-        await page.on('onResourceRequested', function (requestData) {
-            console.info('Requesting', requestData.url);
-        });
+
+        console.log(getTimeNow() + ' Requesting ' + url);
 
         const status = await page.open(url);
         const content = await page.property('content');
 
         await page.evaluateJavaScript(script).then(function (html) {
             if (html.includes('BEA IMAX @ UA iSQUARE')) {
+                console.log(getTimeNow() + ' Tickets available.');
                 notifier.notify(
                     {
                         'message': 'Tickets Available',
@@ -43,9 +43,16 @@ function checkTickets() {
                         console.log(response, metadata);
                     }
                 );
+            } else {
+                console.log(getTimeNow() + ' Tickets not available.');
             }
         });
 
         await instance.exit();
     })();
+}
+
+function getTimeNow() {
+    const now = new Date();
+    return now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds()
 }
