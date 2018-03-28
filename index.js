@@ -1,21 +1,11 @@
 const phantom = require('phantom');
+const cheerio = require('cheerio');
 const NotificationCenter = require('node-notifier').NotificationCenter;
 
-const args = process.argv.slice(2);
-if (args.length < 1) {
-    console.log('Usage: node index.js [URL]');
-    return;
-}
-
-const url = args[0];
+const url = 'https://uacinemas.com.hk/eng/movies';
+const prefix = 'https://uacinemas.com.hk/eng/';
+const keyword = 'Avengers';
 const notifier = new NotificationCenter();
-
-const script =
-    ['function() {',
-        'var div = document.getElementById(\'ticketing\');',
-        'if (div !== null) return div.innerHTML;',
-        'else return div;',
-        '}'].join('');
 
 checkTickets();
 setInterval(checkTickets, 300000);
@@ -30,23 +20,52 @@ function checkTickets() {
         const status = await page.open(url);
         const content = await page.property('content');
 
-        await page.evaluateJavaScript(script).then(function (html) {
-            if (html.includes('BEA IMAX @ UA iSQUARE')) {
-                console.log(getTimeNow() + ' Tickets available.');
-                notifier.notify(
-                    {
-                        'message': 'Tickets Available',
-                        'open': url,
-                        'wait': true
-                    },
-                    function (error, response, metadata) {
-                        console.log(response, metadata);
+        const $ = cheerio.load(content);
+        const movies = $(".center_info > h3 > a:contains('IMAX')");
+
+        for (let k in movies) {
+            if (movies.hasOwnProperty(k)) {
+                const movie = movies[k];
+                if (movie.children && movie.children[0]) {
+                    const title = movie.children[0].data;
+                    if (title.includes(keyword)) {
+                        console.log(getTimeNow() + ' ' + title);
+                        const movieURL = prefix + movie.attribs.href;
+                        checkMovieTickets(movieURL)
                     }
-                );
-            } else {
-                console.log(getTimeNow() + ' Tickets not available.');
+                }
             }
-        });
+        }
+
+        await instance.exit();
+    })();
+}
+
+function checkMovieTickets(url) {
+    (async function () {
+        const instance = await phantom.create();
+        const page = await instance.createPage();
+
+        console.log(getTimeNow() + ' Requesting ' + url);
+
+        const status = await page.open(url);
+        const content = await page.property('content');
+
+        if (content.includes('BEA IMAX @ UA iSQUARE')) {
+            console.log(getTimeNow() + ' Tickets available.');
+            notifier.notify(
+                {
+                    'message': 'Tickets Available',
+                    'open': url,
+                    'wait': true
+                },
+                function (error, response, metadata) {
+                    console.log(response, metadata);
+                }
+            );
+        } else {
+            console.log(getTimeNow() + ' Tickets not available.');
+        }
 
         await instance.exit();
     })();
@@ -54,7 +73,7 @@ function checkTickets() {
 
 function getTimeNow() {
     const now = new Date();
-    return ('0' + now.getHours()).slice(-2)   + ":" +
-    ('0' + now.getMinutes()).slice(-2) + ":" +
-    ('0' + now.getSeconds()).slice(-2);
+    return ('0' + now.getHours()).slice(-2) + ":" +
+        ('0' + now.getMinutes()).slice(-2) + ":" +
+        ('0' + now.getSeconds()).slice(-2);
 }
