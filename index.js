@@ -4,7 +4,7 @@ const NotificationCenter = require('node-notifier').NotificationCenter;
 
 const url = 'https://uacinemas.com.hk/eng/movies';
 const prefix = 'https://uacinemas.com.hk/eng/';
-const keyword = 'Avengers';
+const keyword = 'Ant-Man';
 const notifier = new NotificationCenter();
 
 checkTickets();
@@ -51,7 +51,8 @@ function checkMovieTickets(url) {
         const status = await page.open(url);
         const content = await page.property('content');
 
-        if (content.includes('BEA IMAX @ UA iSQUARE')) {
+        const $ = cheerio.load(content);
+        if ($('div').hasClass('ticketing_box') && $('.ticketing_box').html().includes('BEA IMAX @ UA iSQUARE')) {
             console.log(getTimeNow() + ' Tickets available.');
             notifier.notify(
                 {
