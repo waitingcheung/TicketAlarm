@@ -13,6 +13,7 @@
     "cheerio": "^1.0.0-rc.2",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "moment-timezone": "^0.5.21",
     "node-notifier": "^5.2.1",
     "nodemailer": "^4.6.6",
     "phantom": "^4.0.12"

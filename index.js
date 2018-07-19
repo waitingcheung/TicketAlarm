@@ -2,6 +2,7 @@ const phantom = require('phantom');
 const cheerio = require('cheerio');
 const nodemailer = require('nodemailer');
 const express = require('express');
+const moment = require('moment-timezone');
 
 const app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -110,8 +111,5 @@ function sendMail(title, url) {
 }
 
 function getTimeNow() {
-    const now = new Date();
-    return ('0' + now.getHours()).slice(-2) + ":" +
-        ('0' + now.getMinutes()).slice(-2) + ":" +
-        ('0' + now.getSeconds()).slice(-2);
+    return moment().tz("Asia/Hong_Kong").format('HH:mm:ss');
 }
