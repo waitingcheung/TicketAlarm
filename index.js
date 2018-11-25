@@ -25,8 +25,18 @@ const config = {
     receivers: process.env.RECEIVERS
 };
 
+
+const min = 120000;
+const max = 600000;
+
 checkTickets();
-setInterval(checkTickets, 300000);
+(function randSetInterval() {
+    const rand = Math.floor(Math.random() * (max - min + 1)) + min;
+    setTimeout(function() {
+        checkTickets();
+        randSetInterval();
+    }, rand);
+}());
 
 function checkTickets() {
     (async function () {
