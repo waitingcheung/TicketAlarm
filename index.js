@@ -15,7 +15,7 @@ const url = 'https://uacinemas.com.hk/eng/movies';
 const prefix = 'https://uacinemas.com.hk/eng/';
 
 if (process.env.KEYWORD === undefined) {
-    require('dotenv').load();
+    require('now-env');
 }
 
 const config = {
