@@ -14,7 +14,7 @@
     "express": "^4.16.3",
     "moment-timezone": "^0.5.21",
     "node-notifier": "^8.0.1",
-    "nodemailer": "^5.1.1",
+    "nodemailer": "^6.4.16",
     "now-env": "^3.1.0",
     "phantom": "^6.0.3"
   }
