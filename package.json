@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "moment-timezone": "^0.5.21",
     "node-notifier": "^8.0.1",
     "nodemailer": "^5.1.1",
